@@ -1,0 +1,22 @@
+{
+  "name": "meme-bot",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/bot/index.ts",
+    "test": "tsx src/tests/bot.test.ts",
+    "build": "tsc",
+    "start": "node dist/bot/index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.0.0",
+    "dotenv": "^16.0.0",
+    "mongoose": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/node-fetch": "^2.6.13",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
