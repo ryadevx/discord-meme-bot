@@ -1,20 +1,16 @@
-import { Message, Attachment } from 'discord.js';
+import { Message } from 'discord.js';
 import { uploadMemee } from '../../controllers/meme.controller.js';
 import { createErrorEmbed, createSuccessEmbed } from '../utils/embedUtils.js';
-import { saveAttachment } from '../utils/fileUtils.js';
 
-export async function uploadCommand(msg: Message, args: string[]): Promise<void> {
-  if (msg.attachments.size === 0) {
-    await msg.reply({
-      embeds: [createErrorEmbed('Please attach an image to upload.')]
-    });
-    return;
-  }
-
+export async function uploadCommand(
+  msg: Message,
+  args: string[]
+): Promise<void> {
   const attachment = msg.attachments.first();
-  if (!attachment || !attachment.contentType?.startsWith('image/')) {
+
+  if (!attachment?.contentType?.startsWith('image/')) {
     await msg.reply({
-      embeds: [createErrorEmbed('Please attach a valid image file.')]
+      embeds: [createErrorEmbed('Attach a valid image')],
     });
     return;
   }
@@ -22,22 +18,31 @@ export async function uploadCommand(msg: Message, args: string[]): Promise<void>
   let description = '';
   let keywords: string[] = [];
 
-  if (args.length > 0) {
+  if (args.length) {
     if (args[0].includes(',')) {
-      keywords = args[0].split(',').map(k => k.trim()).filter(Boolean);
+      keywords = args[0].split(',').map(k => k.trim());
       description = args.slice(1).join(' ');
     } else {
       description = args.join(' ');
     }
   }
 
-  const filePath = await saveAttachment(attachment);
-  const meme = await uploadMemee(msg.author, filePath, description, keywords);
+  const meme = await uploadMemee(
+  {
+    id: msg.author.id,
+    username: msg.author.username
+  },
+  attachment.url,
+  description,
+  keywords
+);
 
-  const embed = createSuccessEmbed(
-    '✅ Meme Uploaded!',
-    `**ID:** ${meme._id}\n**Description:** ${description || 'No description'}\n**Keywords:** ${keywords.length > 0 ? keywords.join(', ') : 'None'}`
-  );
-
-  await msg.reply({ embeds: [embed] });
+  await msg.reply({
+    embeds: [
+      createSuccessEmbed(
+        '✅ Meme uploaded',
+        `ID: ${meme._id}`
+      ),
+    ],
+  });
 }

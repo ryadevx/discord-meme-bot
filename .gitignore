@@ -96,3 +96,9 @@ ecosystem.config.js
 
 # TypeScript cache
 *.tsbuildinfo
+
+node_modules
+dist
+.env
+.env.local
+.env.production
